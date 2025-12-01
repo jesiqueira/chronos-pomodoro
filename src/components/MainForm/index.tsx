@@ -5,11 +5,14 @@ import { DefaultInput } from '../DefaultInput'
 import React from 'react'
 
 export function MainForm() {
-  const [taskName, setTaskName] = React.useState('')
+  const [taskNameInput, setTaskNameInput] = React.useState('')
 
   const handleCreateNewTask = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log('Deu certo')
+    // console.log('Deu certo')
+    if (taskNameInput.trim() === '') return
+
+    console.log(taskNameInput.trim());
   }
 
   return (
@@ -20,8 +23,8 @@ export function MainForm() {
           type="text"
           labelText="Task"
           placeholder="Digite algo"
-          value={taskName}
-          onChange={(e) => setTaskName(e.target.value)}
+          value={taskNameInput}
+          onChange={(e) => setTaskNameInput(e.target.value)}
         />
       </div>
       <div className="formRow">
