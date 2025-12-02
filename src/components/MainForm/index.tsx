@@ -8,6 +8,7 @@ import { useTaskContext } from '../../contexts/TaskContext/useTaskContext'
 import { getNextCycle } from '../utils/getNextCycle'
 import { getNextCycleType } from '../utils/getNextCycleType'
 import { TaskActionTypes } from '../../contexts/TaskContext/taskActions'
+import { Tips } from '../Tips'
 
 export function MainForm() {
   const { state, dispatch } = useTaskContext()
@@ -56,7 +57,7 @@ export function MainForm() {
         />
       </div>
       <div className="formRow">
-        <p>Nesse ciclo foque por 25 min.</p>
+        <Tips />
       </div>
       {state.currentCycle > 0 && (
         <div className="formRow">
