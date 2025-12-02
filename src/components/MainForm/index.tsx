@@ -1,4 +1,4 @@
-import { PlayCircleIcon } from 'lucide-react'
+import { PlayCircleIcon, StopCircleIcon } from 'lucide-react'
 import { Cycles } from '../Cycles'
 import { DefaultButton } from '../DefaultButton'
 import { DefaultInput } from '../DefaultInput'
@@ -7,10 +7,10 @@ import type { TaskModel } from '../models/TaskModel'
 import { useTaskContext } from '../../contexts/TaskContext/useTaskContext'
 import { getNextCycle } from '../utils/getNextCycle'
 import { getNextCycleType } from '../utils/getNextCycleType'
-import { formatSecondsToMinutes } from '../utils/formatSecondsToMinutes'
+import { TaskActionTypes } from '../../contexts/TaskContext/taskActions'
 
 export function MainForm() {
-  const { state, setState } = useTaskContext()
+  const { state, dispatch } = useTaskContext()
   const [taskNameInput, setTaskNameInput] = React.useState('')
 
   // Ciclos
@@ -35,19 +35,11 @@ export function MainForm() {
       type: nextCycleType,
     }
 
-    const secondsRemaining = newTask.duration * 60
+    dispatch({ type: TaskActionTypes.START_TASK, payload: newTask })
+  }
 
-    setState((prevState) => {
-      return {
-        ...prevState,
-        config: { ...prevState.config },
-        activeTask: newTask,
-        currentCycle: nextCycle,
-        secondsRemaining,
-        formattedSecondsRemaining: formatSecondsToMinutes(secondsRemaining),
-        tasks: [...prevState.tasks, newTask],
-      }
-    })
+  function handleInterruptTask() {
+    dispatch({ type: TaskActionTypes.INTERRUPT_TASK })
   }
 
   return (
@@ -60,6 +52,7 @@ export function MainForm() {
           placeholder="Digite algo"
           value={taskNameInput}
           onChange={(e) => setTaskNameInput(e.target.value)}
+          disabled={!!state.activeTask}
         />
       </div>
       <div className="formRow">
@@ -71,7 +64,11 @@ export function MainForm() {
         </div>
       )}
       <div className="formRow">
-        <DefaultButton icon={<PlayCircleIcon />} />
+        {!state.activeTask ? (
+          <DefaultButton type="submit" icon={<PlayCircleIcon />} key="botao_submit" />
+        ) : (
+          <DefaultButton type="button" icon={<StopCircleIcon />} color="red" onClick={handleInterruptTask} key="botao_button" />
+        )}
       </div>
     </form>
   )
