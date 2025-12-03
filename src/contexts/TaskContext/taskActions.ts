@@ -4,6 +4,8 @@ export const TaskActionTypes = {
   START_TASK: 'START_TASK',
   INTERRUPT_TASK: 'INTERRUPT_TASK',
   RESET_STATE: 'RESET_STATE',
+  COUNT_DOWN: 'COUNT_DOWN',
+  COMPLETE_TASK: 'COMPLETE_TASK',
 } as const // O 'as const' diz ao TS para tratar as propriedades como literais exatos.
 
 export type TaskActionTypes = (typeof TaskActionTypes)[keyof typeof TaskActionTypes]
