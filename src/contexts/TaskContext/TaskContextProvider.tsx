@@ -4,6 +4,7 @@ import { TaskContext } from './TaskContext'
 import { taskReducer } from './taskReducer'
 import { TimerWorkerManager } from '../../workers/TimerWorkerManager'
 import { TaskActionTypes } from './taskActions'
+import { loadBeep } from '../../utils/loadBeep'
 
 type TaskContextProviderProps = {
   children: React.ReactNode
@@ -11,20 +12,18 @@ type TaskContextProviderProps = {
 
 export function TaskContextProvider({ children }: TaskContextProviderProps) {
   const [state, dispatch] = React.useReducer(taskReducer, initialTaskState)
+  const playBeepRef = React.useRef<ReturnType<typeof loadBeep> | null>(null)
 
   const worker = TimerWorkerManager.getInstance()
 
-  worker.onmessage((e) => {
-    const countDownSeconds = e.data
-    console.log(countDownSeconds)
-
-    if (countDownSeconds <= 0) {
-      dispatch({ type: TaskActionTypes.COMPLETE_TASK })
-      worker.terminate()
+  React.useEffect(() => {
+    if (state.activeTask && playBeepRef.current === null) {
+      console.log('Carregando áudio')
+      playBeepRef.current = loadBeep()
     } else {
-      dispatch({ type: TaskActionTypes.COUNT_DOWN, payload: { secondsRemaining: countDownSeconds } })
+      playBeepRef.current = null
     }
-  })
+  }, [state.activeTask])
 
   React.useEffect(() => {
     if (!state.activeTask) {
@@ -34,6 +33,16 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
     worker.postMessage(state)
   }, [state, worker])
+
+  worker.onmessage((e) => {
+    const countDownSeconds = e.data
+
+    if (countDownSeconds <= 0) {
+      dispatch({ type: TaskActionTypes.COMPLETE_TASK })
+    } else {
+      dispatch({ type: TaskActionTypes.COUNT_DOWN, payload: { secondsRemaining: countDownSeconds } })
+    }
+  })
 
   return <TaskContext.Provider value={{ state, dispatch }}>{children}</TaskContext.Provider>
 }
