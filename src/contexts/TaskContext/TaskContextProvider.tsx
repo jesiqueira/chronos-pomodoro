@@ -18,7 +18,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
   React.useEffect(() => {
     if (state.activeTask && playBeepRef.current === null) {
-      console.log('Carregando áudio')
+      // console.log('Carregando áudio')
       playBeepRef.current = loadBeep()
     } else {
       playBeepRef.current = null
@@ -27,7 +27,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
   React.useEffect(() => {
     if (!state.activeTask) {
-      console.log('Worker terminado por falta de activeTask')
+      // console.log('Worker terminado por falta de activeTask')
       worker.terminate()
     }
 
